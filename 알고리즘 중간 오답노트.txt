@@ -1,0 +1,274 @@
+순차리스트(배열) : 정적할당 / 장점 : 구현이 용이, 특정원소 탐색이 쉬움
+					 단점 : 중간에 원소 삽입, 삭제가 어려움, 메모리사용 비효율적임
+
+연결리스트 : 동적할당 / 장점 : 중간에 원소 삽입, 삭제가 어려움, 메모리 사용 효율적
+				 단점 : 구현이 어려움, 특정원소 탐색이 어려움
+				 종류 : 단순연결, 이중연결, 원형연결
+
+Stack : LIFO / 미로찾기, 트리순회, DFS처리, 함수호출
+Queue : FIFO / 들어온 순서대로 처리해야 하는 데이터의 저장, 프린터큐
+
+순차자료구조검색 : 인덱스를 이용, 특정원소 바로 검색, 
+연결자료구조 검색: Head가 가르키는 첫 번째노드부터 순차적으로 검색
+
+A - B * C - E / F * G + H              A - (B * C) - ((E / F) * G) + H
+전위 : +--A*BC */EFGH
+후위 : ABC*- EF/G* -H+
+
+
+A-B*C/E+F/G-H
+
+A-((B*C)/E)+(F/G)-H
+
+전위 : -+-A/*BCE/FGH
+후위 : ABC*E/-FG/+H-
+
+
+1. 순차자료구조 배열을 이용한 전화번호부관리 프로그램 25.03.26
+- 기능: 입력,수정,삭제, 출력, 종료
+- 성명을 키로 찾아 수정,삭제작업함
+- 입력시 성명의 중복체크 해줘야 함
+'''
+PhoneBook = []
+
+# 중복체크후 신규인  추가
+def add_new_user():
+    name = input("이름: ")
+    if find_user(name)!= None :
+        print("이미 저장된 이름입니다")
+        return
+    phone = input("전화번호 : ")
+       
+    PhoneBook.append([name,phone])  //////////////////////////
+
+#특정인 위치 찾기    
+def find_user(name) :
+    count = 0
+    position = None
+    for i in PhoneBook: /////////////////////////
+        if(i[0] == name): 
+            position = count
+            break
+        else:
+            count = count + 1
+    return position
+
+# 이름으로 검색하여 전화번호 수정    
+def edit_user_info():
+    name = input("수정할 사용자의 이름을 입력하세요 : ")
+    position = None
+    
+    position=find_user(name)
+    if(position == None):
+        print("해당 정보가 존재하지 않습니다.")
+        return
+    edit_value = input("수정할 전화번호 입력  : ")
+    PhoneBook[position][1] = edit_value
+
+#특정인 삭제    
+def delete_user():
+    name = input("삭제할 사용자의 이름을 입력하세요 : ")
+    position = None
+    
+    position=find_user(name)
+    if(position == None):
+        print("해당 정보가 존재하지 않습니다.")
+        return
+    del(PhoneBook[position])             /////////////////////////////
+
+#전체 전화번호 출력
+def print_all_phone():
+    print("*"*10, "전화번호부", "*"*10)
+    for i in PhoneBook:
+        print("이름: %5s   전화번호:%5s" %(i[0], i[1]))
+    print("*"*32)
+
+#main part
+if __name__ == '__main__' :
+    while True:
+        choice = input("사용자 추가(n), 수정(e), 삭제(d), 전체 출력(p), 종료(q) : ")
+
+        if(choice == 'n'):
+            add_new_user()
+            
+        elif(choice == 'e'):
+            edit_user_info()
+            
+        elif(choice == 'd'):
+            delete_user()
+            
+        elif(choice == 'p'):
+            print_all_phone()
+            
+        elif(choice == 'q'):
+            break
+        else :
+            print("다시 입력하세요")
+   
+    print("\n프로그램을 종료합니다.")
+
+
+
+ 단순연결리스트를 이용한 객체지향 전화번호부 자료관리.
+- 단순연결리스트 클래스에 노드 클래스를 삽입
+- 이름 중복 체크
+- 이름순으로 연결리스트에 저장
+- 24.04.15
+'''
+
+class PhoneBook:
+        class Node:
+                def __init__(self, data):
+                        self.data = data # [이름, 전화번호]
+                        self.next = None #연결리스트 다음 노드 
+		
+        def __init__(self):
+                self.head = None #연결리스트 헤드 초기화 
+
+
+        def insertNode(self, add_data):                    
+                if self.head == None:  # 빈 연결리스트     ///////////////////////////////
+                        # 노드 생성 후 생성된 노드의 주소 값을 헤드에 넣기
+                        self.head= self.Node(add_data)         /////////////////////////////
+                        print("신규입력 완료\n")
+                        return
+    
+                current = self.head # 현재에 헤드의 주소값 저장
+                prev= None
+                while current :    #노드가 있을때까지
+                        if current.data[0] == add_data[0]: # 이미 있는 이름이라면
+                                print("이미 있는 이름입니다\n")
+                                return
+                        elif current.data[0] > add_data[0] : # 이름순 정렬 
+                                break
+                        prev = current # 이전에 현재 주소값을 저장
+                        current = current.next # 현재에 다음 주소 값을 저장
+                        
+                new_node = self.Node(add_data) # 새노드 생성
+                
+                if not prev : # 가장 작은 이름임           ////////////////////
+                        new_node.next = self.head # 헤드가 가르키는 주소값을 생성된 노드가 가르키는 주소값에 저장 ///////////////
+                        self.head = new_node # 생성된 노드의 주소 값을 헤드에 저장 ////////////////
+
+                else : #prev 와 next사이에 신규 노드 삽입하면 됨               ////////////////
+                        prev.next = new_node #prev 가 가르키는 주소값에 생성된 노드의 주소값을 저장  //////////////////
+                        new_node.next = current # 생성된 노드가 가르키는 주소값에 현재 노드의 주소값을 저장////////////////
+                print("신규입력 완료\n")
+                
+        def changeNode(self, change_name): 
+                current = self.head #현재 노드를 헤드로 시작 
+                while current : #current가 None이 아닐때까지 반복 
+                        if current.data[0] == change_name: #수정할 이름을 찾으면
+                                print("\n{}전화번호는 {}입니다.".format(current.data[0], current.data[1]))
+                                current.data[1] = input("변경할 전화번호:")
+                                print("\n{}의 전화번호가 {}으로 수정되었습니다.".format(current.data[0], current.data[1]))
+                                return
+                        current=current.next
+                print("없는 이름입니다\n")
+                
+                      
+    
+        def printNodes(self): 
+                current = self.head # 현재 헤드의 주소값 저장
+                if current == None:  # 빈 리스트이면
+                        return 
+                while current != None: #리스트 끝까지 반복
+                        print(current.data, end = ' ')
+                        current = current.next # 다음 노드의 주소값을 현재에 저장 
+               
+                return
+                
+
+         
+        def deleteNode(self, delete_name):
+                if self.head == None: #헤드가 비어있으면
+                        print("연결리스트가 비어 있습니다\n")
+                        return
+                current = self.head # 현재 헤드의 주소값 저장
+                prev = None #이전 노드 초기화
+  	  
+                while current :
+                        if current.data[0] == delete_name :
+                                if not prev:  # 첫번째 자료임
+                                        self.head = current.next # 헤드에 다음 노드의 주소값을 저장
+                                else :
+                                        prev.next = current.next # 이전 노드에 다음 노드의 주소값을 저장
+                                del current  # 해당 노드를 메모리에서 free시킴
+                                print("연락처가 삭제되었습니다\n")
+                                return
+                        prev = current  # 다음 노드로 이동
+                        current = current.next
+                
+                print("없는 이름 입니다\n")
+
+
+                
+
+        def findNode(self,find_name):
+                if self.head == None:
+                        print("빈 리스트입니다")
+                        return None
+                current = self.head #현재에 헤드의 주소값 저장
+
+                while current :
+                        if current.data[0] > find_name: #현재 이름보다 찾을 이름이 더 작다면 (이름순 정렬을 했으므로)@@@@@@@@@@@
+                                break:
+                        if current.data[0] == find_name: #찾는 이름을 current가 가지고 있다면
+                                print('\n{}님의 전화번호는 {} 입니다.' .format(current.data[0], current.data[1]))
+                                return current
+                        current = current.next # current가 다음 노드의 주소를 가짐.
+                print("없는 이름입니다\n")
+                return None
+
+	    
+if __name__=="__main__":
+
+    print('단순연결리스트를 이용한 전화번호부 관리 프로그램입니다.\n')
+    
+    P = PhoneBook()  # 단순연결리스트 생성
+
+    while True:
+        print('\n1: 입력\t 2:수정\t 3:삭제\t 4:탐색\t 0:종료\n')
+        
+        ch = input("기능 선택--> ")
+            
+        if ch == '0':
+            P.printNodes()
+            print('종료합니다\n')
+            break
+
+        elif ch == '1':
+            add_data =[]
+            add_data.append(input('입력할 이름: '))         
+            add_data.append(input('입력할 전화번호: '))
+            P.insertNode(add_data) 
+            P.printNodes()
+            
+        elif ch == '2':
+            change_name = (input('전화번호를 수정할 이름:'))
+            P.changeNode(change_name)  
+            P.printNodes()
+
+        elif ch == '3':
+            delete_name = input('삭제할 이름: ')
+            P.deleteNode(delete_name)                            
+            P.printNodes()
+            
+        elif ch == '4':
+            search_name = input('탐색할 이름 : ')
+            P.findNode(search_name)
+        else:       
+            print('\n잘못된 입력입니다.\n')
+
+
+시간 →
+     ↑                                      O(n!)
+     |                                   O(2ⁿ)
+     |                              O(n²)
+     |                         O(n log n)
+     |                    O(n)
+     |               O(log n)
+     |          O(1)
+     └────────────────────────→ 입력 크기(n)
+
+
